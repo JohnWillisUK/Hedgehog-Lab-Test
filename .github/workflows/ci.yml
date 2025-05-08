@@ -1,0 +1,69 @@
+name: CI Pipeline  # Identifies this workflow in GitHub Actions
+
+on:  
+  push:  
+    branches:  
+      - main  # Trigger only when pushing to `main`
+  pull_request:  # Trigger when creating a PR
+
+jobs:  
+  build:  
+    runs-on: ubuntu-latest  # Run inside a GitHub Actions VM
+
+    services:  
+      postgres:  
+        image: postgres  
+        env:  
+          POSTGRES_PASSWORD: example  # Set database password
+        ports:  
+          - 5432:5432  # Expose PostgreSQL for backend
+        options: >-  
+          --health-cmd=pg_isready
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5  # Ensure database is healthy before backend starts
+
+    steps:  
+    - name: Checkout repository  
+      uses: actions/checkout@v3  
+    
+    - name: Set up Docker Buildx  
+      uses: docker/setup-buildx-action@v3  
+
+    - name: Install Docker Compose  
+      run: |
+        curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        chmod +x /usr/local/bin/docker-compose  # Make it executable
+
+    - name: Build frontend  
+      run: |  
+        docker build -t test-frontend ./frontend  
+
+    - name: Build backend  
+      run: |  
+        docker build -t test-backend ./backend  
+
+    - name: Start Database & Backend Services  
+      run: |
+        docker compose up --build -d db backend  # Start DB and backend together
+
+    - name: Wait for Database to Be Ready  
+      run: sleep 20  # Give PostgreSQL time to initialize
+
+    - name: Check Running Containers  
+      run: docker ps -a  # Verify backend exists in GitHub Actions runner
+
+    - name: View Backend Logs (Only If Running)  
+      run: |
+        if docker ps | grep -q "hedgehog-lab-test-backend-1"; then
+          docker logs hedgehog-lab-test-backend-1;
+        else
+          echo "Backend container was never started!";
+          exit 1;
+        fi
+
+    - name: Run Backend Health Check  
+      run: |
+        echo "Waiting for backend..."  
+        sleep 30  # Give backend time to start
+        curl -f http://localhost:8000/healthz || exit 1  # Check if backend is running
