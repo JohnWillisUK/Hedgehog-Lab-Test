@@ -70,7 +70,10 @@ jobs:
 
     - name: Tag backend image for GHCR
       run: |
-        docker tag test-backend ghcr.io/${{ github.repository_owner }}/hedgehog-lab-test-backend:latest
+        REPO_OWNER_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+        docker tag test-backend ghcr.io/${REPO_OWNER_LOWER}/hedgehog-lab-test-backend:latest
 
     - name: Push backend image to GHCR
-      run: docker push ghcr.io/${{ github.repository_owner }}/hedgehog-lab-test-backend:latest
+      run: |
+        REPO_OWNER_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+        docker push ghcr.io/${REPO_OWNER_LOWER}/hedgehog-lab-test-backend:latest
