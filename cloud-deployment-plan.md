@@ -1,118 +1,116 @@
-# Cloud Deployment Plan for Hedgehog Lab DevOps Task
+Cloud Deployment Plan – Hedgehog Lab DevOps Task
 
-This document outlines how the multi-container application (React frontend, FastAPI backend, PostgreSQL database) is deployed to Microsoft Azure using Infrastructure as Code and GitHub-integrated CI/CD.
+This guide explains how to deploy the full application (frontend, backend, and database) to Microsoft Azure using Terraform and GitHub Actions.
 
----
+1. What’s Being Deployed
 
-## 1. Overview
+Frontend: React app (Static Web App)
 
-The application architecture consists of:
+Backend: FastAPI app in a Docker container (App Service)
 
-* **Frontend**: React app deployed via Azure Static Web Apps (with GitHub Actions)
-* **Backend**: FastAPI app containerized and deployed to Azure App Service from GitHub Container Registry (GHCR)
-* **Database**: Azure Database for PostgreSQL Flexible Server
-* **Infrastructure**: Provisioned using Terraform stored in `infra/`
+Database: PostgreSQL Flexible Server
 
----
+Infra as Code: Terraform in the infra/ folder
 
-## 2. Frontend Deployment (React)
+2. Step-by-Step Frontend Deployment (React)
 
-The frontend is managed through **Azure Static Web Apps**, created via the Azure Portal and linked to GitHub.
+🧭 Goal: Deploy the React app to Azure Static Web Apps
 
-### Steps:
+Steps:
 
-1. Delete any previously Terraform-created Static Web App (optional cleanup)
-2. Create a new Static Web App from the Azure Portal with these settings:
+Go to the Azure Portal → Create a new Static Web App
 
-   * **Source**: GitHub
-   * **Repo**: `JohnWillisUK/Hedgehog-Lab-Test`
-   * **Branch**: `main`
-   * **App location**: `frontend`
-   * **Output location**: `build`
-   * **API location**: *(leave blank)*
-3. Azure generates a GitHub Actions workflow to build and deploy the frontend automatically
-4. React app is built with `npm run build` and deployed to Azure
+Use the following values:
 
----
+Source: GitHub
 
-## 3. Backend Deployment (FastAPI)
+Repo: JohnWillisUK/Hedgehog-Lab-Test
 
-The backend is deployed to **Azure App Service for Linux** and runs in a Docker container pulled from GHCR.
+Branch: main
 
-### CI/CD Workflow:
+App location: frontend
 
-* GitHub Actions builds the Docker image and pushes it to GHCR on every push to `main`
-* Image is tagged as:
+Output location: build
 
-  * `ghcr.io/johnwillisuk/hedgehog-lab-test-backend:latest`
+API location: (leave blank)
 
-### Terraform Configuration:
+Azure will create a GitHub Actions file in .github/workflows/
 
-* Uses `azurerm_linux_web_app` with:
+On every push to main, the React app is built and deployed to Azure
 
-  * `DOCKER_CUSTOM_IMAGE_NAME` set to the GHCR image URL
-  * Environment variables for DB connection
-  * Port `8000` exposed as `WEBSITES_PORT`
+3. Step-by-Step Backend Deployment (FastAPI)
 
----
+🧭 Goal: Build and run the backend as a Docker container on Azure App Service
 
-## 4. Database Deployment
+Steps:
 
-Provisioned using `azurerm_postgresql_flexible_server`:
+On push to main, GitHub Actions builds the backend Docker image
 
-* Deployed in `westeurope`
-* Admin user/password from Terraform variables
-* Firewall rule added to allow access from App Service
+The image is pushed to GitHub Container Registry (GHCR):
 
----
+ghcr.io/johnwillisuk/hedgehog-lab-test-backend:latest
 
-## 5. Infrastructure Management (Terraform)
+Terraform provisions an Azure Linux App Service
 
-All infrastructure is described in `infra/main.tf` and related files.
+The App Service pulls and runs the container using this image
 
-### To Deploy:
+4. Step-by-Step Database Deployment (PostgreSQL)
 
-```bash
+🧭 Goal: Deploy a managed Postgres database to Azure
+
+Steps:
+
+Terraform provisions azurerm_postgresql_flexible_server
+
+The admin username and password come from terraform.tfvars
+
+A firewall rule is added to allow access from the backend App Service
+
+5. Deploying Infrastructure with Terraform
+
+To deploy everything:
+
 cd infra
 az login
 terraform init
 terraform apply
-```
 
-### To Destroy:
+To destroy everything:
 
-```bash
 terraform destroy
-```
 
----
+Files are in the infra/ directory:
 
-## 6. Security & Config
+main.tf, variables.tf, terraform.tfvars, outputs.tf
 
-* Secrets like `POSTGRES_PASSWORD` are passed via App Settings (could be improved using Key Vault)
-* `azurerm_postgresql_flexible_server` currently allows public access — production deployments should use VNet integration or IP whitelisting
-* Static Web App is public by default
+6. Security Notes
 
----
+Environment variables (like DB password) are set in App Service
 
-## 7. Improvements
+The DB is open to all IPs for now — this should be restricted in production
 
-Further enhancements could include:
+Frontend and backend are both publicly accessible
 
-* Auto-deploying Terraform via GitHub Actions with environment approvals
-* Moving database secrets to Azure Key Vault
-* Adding monitoring (App Insights, logging)
-* Locking down DB with IP restrictions or private networking
-* Versioned backend images per commit SHA
+7. Suggested Improvements
 
----
+Use Azure Key Vault to store secrets
 
-## 8. Summary
+Add monitoring (App Insights, logs)
 
-This deployment uses a clean separation of CI/CD and infrastructure provisioning:
+Restrict DB access to App Service only (via VNet or IP)
 
-* GitHub Actions handles app packaging
-* Terraform provisions and manages infrastructure
-* Azure services handle scaling, availability, and hosting
+Add staging environments
 
-The approach is scalable, repeatable, and easily extended.
+Tag backend images with Git SHA for version tracking
+
+8. Summary
+
+This setup separates concerns cleanly:
+
+Frontend deploys automatically via GitHub → Azure Static Web Apps
+
+Backend builds and pushes to GHCR, deployed via Terraform to App Service
+
+Database is provisioned via Terraform
+
+✅ Fast to deploy, easy to extend, and ready for real-world use.
