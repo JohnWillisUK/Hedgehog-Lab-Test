@@ -69,7 +69,7 @@ docker-compose down -v
 
 ###############################################################################################
 
-## Tech Stack and Structure
+## Tech Stack and Structure 
 
 ├── backend/     # FastAPI backend
 ├── frontend/    # React frontend
