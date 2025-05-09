@@ -1,4 +1,5 @@
 Hedgehog Lab DevOps Task
+
 This repository demonstrates a full-stack containerized web application using DevOps best practices with CI/CD, Docker, Terraform, and Azure. The solution includes a three-tier architecture, where the frontend communicates with the backend, and updates are persisted in a PostgreSQL database.
 
 🧱 Architecture
