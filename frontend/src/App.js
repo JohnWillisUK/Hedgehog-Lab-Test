@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
+const API_BASE = process.env.REACT_APP_API_BASE_URL;
+
 function App() {
   const [name, setName] = useState('');
   const [results, setResults] = useState([]);
 
   const submitName = async () => {
-    await fetch('http://localhost:8000/submit', {
+    await fetch(`${API_BASE}/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name }),
@@ -15,7 +17,7 @@ function App() {
   };
 
   const fetchResults = async () => {
-    const res = await fetch('http://localhost:8000/results');
+    const res = await fetch(`${API_BASE}/results`);
     const data = await res.json();
     setResults(data.results);
   };
