@@ -59,18 +59,18 @@ jobs:
           exit 1;
         fi
 
-    - name: Run Backend Health Check
-      run: |
-        echo "Waiting for backend..."
-        sleep 30
-        curl -f http://localhost:8000/healthz || exit 1
+        - name: Run Backend Health Check
+          run: |
+            echo "Waiting for backend..."
+            sleep 30
+            curl -f http://localhost:8000/healthz || exit 1
 
-    - name: Log in to GitHub Container Registry
-      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        - name: Log in to GitHub Container Registry
+          run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-    - name: Tag backend image for GHCR
-      run: |
-        docker tag test-backend ghcr.io/${{ github.repository_owner }}/hedgehog-lab-test-backend:latest
+        - name: Tag backend image for GHCR
+          run: |
+            docker tag test-backend ghcr.io/${{ github.repository_owner,, }}/hedgehog-lab-test-backend:latest
 
-    - name: Push backend image to GHCR
-      run: docker push ghcr.io/${{ github.repository_owner }}/hedgehog-lab-test-backend:latest
+        - name: Push backend image to GHCR
+          run: docker push ghcr.io/${{ github.repository_owner,, }}/hedgehog-lab-test-backend:latest

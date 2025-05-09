@@ -18,13 +18,14 @@ Everything runs in containers, and Iâ€™ve configured Docker volumes so data isnâ
 -------- In a bash terminal--------
 git clone https://github.com/JohnWillisUK/Hedgehog-Lab-Test.git
 cd Hedgehog-Lab-Test
------------------------------------
+----------------.-------------------
 
 2. Build and run the containers:
 
 -------- In a bash terminal--------
 docker-compose up --build
------------------------------------
+----------------.-------------------
+
 
 3. Once this has been completed, visit the frontend in your browser:
 http://localhost:3000
@@ -40,26 +41,30 @@ You can also inspect the database manually to confirm data is persisting:
 
 -------- In a bash terminal--------
 docker exec -it hedgehog-lab-test-db-1 psql -U postgres
------------------------------------
+----------------.-------------------
+
 Once inside psql
 
 ----------- Inside pSQL -----------
 SELECT * FROM submissions;
------------------------------------
+----------------.-------------------
+
 
 and to exit type..
 
 ----------- Inside pSQL -----------
 \q
------------------------------------
+----------------.-------------------
+
 
 ## Stopping the App
 To stop the app and remove everything:
-
+(Warning: If you complete this step the data will not persist!)
 
 -------- In a bash terminal--------
 docker-compose down -v
------------------------------------
+----------------.-------------------
+
 
 
 ###############################################################################################
