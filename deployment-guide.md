@@ -82,7 +82,7 @@ The frontend is a simple React app that talks to the backend via fetch requests.
 
 The database is PostgreSQL and initialized using init.sql.
 
-## Data Persistence
+## Data Persistence 
 PostgreSQL uses a named Docker volume. This means if the container crashes or restarts, the data is still there.
 
 You can see the volume in the docker-compose.yml file under volumes:.
