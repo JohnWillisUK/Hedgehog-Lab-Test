@@ -2,6 +2,7 @@
 # Deployment Guide – Hedgehog Lab DevOps Test
 
 This guide explains how I deployed the application locally using Docker Compose.
+The guide is best viewed locally in your IDE
 
 The app is split into three main parts:
 - A React frontend where users can enter a name
@@ -20,7 +21,7 @@ git clone https://github.com/JohnWillisUK/Hedgehog-Lab-Test.git
 cd Hedgehog-Lab-Test
 ----------------.-------------------
 
-2. Build and run the containers:
+2. Build and run the containers: (Ensure Docker Desktop is running)
 
 -------- In a bash terminal--------
 docker-compose up --build
@@ -35,6 +36,8 @@ You can enter a name and submit it. The name will be saved to the database and a
 4. The backend is accessible at:
 
 http://localhost:8000
+
+(You can view results stored by going to http://localhost:8000/results )
 
 ## Optional: View Data in the Postgres Container
 You can also inspect the database manually to confirm data is persisting:
