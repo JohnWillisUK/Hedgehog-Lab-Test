@@ -77,3 +77,31 @@ jobs:
       run: |
         REPO_OWNER_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
         docker push ghcr.io/${REPO_OWNER_LOWER}/hedgehog-lab-test-backend:latest
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Lint Placeholder
+      run: echo "Linting would go here..."
+
+  test:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+    - name: Test Placeholder
+      run: echo "Tests would run here..."
+
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+    - name: Security Scan Placeholder
+      run: echo "Security scan would go here..."
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: security-scan
+    steps:
+    - name: Deployment Placeholder
+      run: echo "Deployment step would go here..."
