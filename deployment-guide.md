@@ -12,6 +12,10 @@ The app is split into three main parts:
 Everything runs in containers, and I’ve configured Docker volumes so data isn’t lost if containers are stopped or restarted.
 
 ---
+## The fastest way to get the app running
+
+The fastest way to get the app running Is to utilise either the powershell or bash script I have put into the Automation-Scripts folder at the root of the project.
+For other ways please read on..
 
 ## Running the App Locally
 
